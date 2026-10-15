@@ -68,7 +68,7 @@
       sortCode: '按 JS 编号',
       allUnis: '全部院校',
       admissibleOnly: '只显示可入读',
-      admissibleHint: '近似参考：加权估算 ≥ 该课程 2026 下四分位 LQ（缺 LQ 则用中位数；两者皆缺则隐藏）。非录取保证。',
+      admissibleHint: '近似参考：显示绿色（高于 UQ / 不低于中位）与黄色（接近中位数）课程；红色与无法比较的隐藏。非录取保证。',
       showing: '显示',
       of: '/',
       programmes: '个课程',
@@ -150,7 +150,7 @@
       sortCode: 'JS code',
       allUnis: 'All universities',
       admissibleOnly: 'Show admissible only',
-      admissibleHint: 'Approximate: weighted estimate ≥ programme 2026 LQ (falls back to median if LQ missing; hidden if both missing). Not an offer guarantee.',
+      admissibleHint: 'Approximate: show green (above UQ / at-or-above median) and yellow (near median) programmes; hide red and not-comparable. Not an offer guarantee.',
       showing: 'Showing',
       of: 'of',
       programmes: 'programmes',
@@ -543,13 +543,8 @@
 
 
   function isAdmissible(r) {
-    const est = r.est && r.est.score;
-    if (est == null) return false;
-    const threshold = r.prog.lower_quartile != null
-      ? r.prog.lower_quartile
-      : r.prog.median;
-    if (threshold == null) return false;
-    return est >= threshold;
+    // Green (above) and yellow (lq-med / med-uq) count as admissible; red / na do not.
+    return r.band === 'above' || r.band === 'lq-med' || r.band === 'med-uq';
   }
 
   function renderResults() {
