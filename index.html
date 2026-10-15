@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="2027 JUPAS admission score calculator based on 2026 admitted-cohort LQ/Med/UQ for CUHK, HKU, HKUST, PolyU. Unofficial." />
+  <title>2027 JUPAS 收生分数估算</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="site-header">
+      <div class="header-top">
+        <div class="brand">
+          <h1 data-i18n="title">2027 JUPAS 收生分数估算</h1>
+          <p class="tagline" data-i18n="tagline">基于 2026 收生结果 · 供 2027 JUPAS 申请人参考</p>
+        </div>
+        <div class="lang-toggle" role="group" aria-label="Language">
+          <button type="button" data-lang="zh" class="active">简体中文</button>
+          <button type="button" data-lang="en">EN</button>
+        </div>
+      </div>
+      <div class="badge-row">
+        <span class="badge" data-i18n="badgeData">仅使用 2026 收生分数</span>
+        <span class="badge muted" data-i18n="badgeUnis">中大 · 港大 · 科大 · 理大</span>
+      </div>
+      <p class="disclaimer" data-i18n="disclaimer">
+        本工具为非官方参考工具，与大学联招处（JUPAS Office）及各院校无任何隶属关系。估算未套用 2027 科目加权，仅为未加权 Best 5 / Best 6 参考值，不可视为录取机会预测。请以各院校官方公布为准。
+      </p>
+    </header>
+
+    <div class="layout">
+      <aside class="panel panel-grades">
+        <h2 data-i18n="gradesTitle">你的 DSE 成绩</h2>
+
+        <h3 data-i18n="coreTitle">核心科目</h3>
+        <div class="grade-grid">
+          <div class="grade-row">
+            <label for="grade-chi" data-i18n="chinese">中国语文</label>
+            <select id="grade-chi"></select>
+          </div>
+          <div class="grade-row">
+            <label for="grade-eng" data-i18n="english">英国语文</label>
+            <select id="grade-eng"></select>
+          </div>
+          <div class="grade-row">
+            <label for="grade-math" data-i18n="math">数学（必修）</label>
+            <select id="grade-math"></select>
+          </div>
+          <div class="grade-row">
+            <label for="grade-csd" data-i18n="csd">公民与社会发展</label>
+            <select id="grade-csd"></select>
+          </div>
+        </div>
+        <p class="hint" data-i18n="csdHint">公民科通常不计入 Best 5/6 分数。</p>
+
+        <h3 data-i18n="electivesTitle">选修科目（最多 5 科）</h3>
+        <div id="electives-list"></div>
+        <button type="button" class="btn btn-ghost" id="btn-add-elective" data-i18n="addElective">+ 添加选修</button>
+
+        <button type="button" class="btn btn-primary" id="btn-calc" data-i18n="calc">估算并比较</button>
+
+        <div class="scale-box">
+          <strong data-i18n="scaleTitle">换算说明（未加权）</strong>
+          <p style="margin:.35rem 0 0" data-i18n="scaleBody">
+            中大 / 港大 / 科大：5**=8.5，5*=7，5=5.5，4=4，3=3，2=2，1=1。理大：简易 5**=7 量表（理大官方为加权分数，尺度不同，无法直接对比）。公民科一般不计入分数。医学（如中大 MBChB）使用 5**=7 量表。
+          </p>
+        </div>
+      </aside>
+
+      <main class="panel panel-results">
+        <h2 data-i18n="resultsTitle">课程比较</h2>
+
+        <div class="filters">
+          <input type="search" id="search-input" data-i18n-placeholder="searchPh" placeholder="搜寻 JS 编号或课程名称…" />
+          <div class="uni-chips" role="group" aria-label="University filter">
+            <button type="button" class="chip active" data-uni="ALL" data-i18n="allUnis">全部院校</button>
+            <button type="button" class="chip" data-uni="CUHK">CUHK</button>
+            <button type="button" class="chip" data-uni="HKU">HKU</button>
+            <button type="button" class="chip" data-uni="HKUST">HKUST</button>
+            <button type="button" class="chip" data-uni="PolyU">PolyU</button>
+          </div>
+          <label class="sr-only" for="sort-select" data-i18n="sortLabel">排序</label>
+          <select id="sort-select">
+            <option value="median">按中位数（高→低）</option>
+            <option value="gap">按与估算差距（近→远）</option>
+            <option value="lq">按下四分位（高→低）</option>
+            <option value="name">按课程名称</option>
+          </select>
+        </div>
+
+        <div class="results-meta">
+          <span id="results-meta-text"></span>
+          <button type="button" class="btn btn-secondary" id="btn-export" data-i18n="exportCsv">导出 CSV</button>
+        </div>
+
+        <div class="prog-list" id="prog-list">
+          <div class="empty" data-i18n="noData">请先输入成绩…</div>
+        </div>
+      </main>
+    </div>
+
+    <footer class="site-footer">
+      <p data-i18n="footer">非官方工具 · 仅供参考 · 数据为 2026 收生结果</p>
+      <p>
+        <a href="../RESEARCH.md" data-i18n="researchLink">数据缺口说明（RESEARCH.md）</a>
+        · CUHK / HKU / HKUST / PolyU · 191 programmes
+      </p>
+    </footer>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
