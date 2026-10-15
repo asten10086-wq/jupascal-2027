@@ -23,6 +23,7 @@
       <div class="badge-row">
         <span class="badge" data-i18n="badgeData">仅使用 2026 收生分数</span>
         <span class="badge muted" data-i18n="badgeUnis">中大 · 港大 · 科大 · 理大</span>
+        <span class="badge muted" data-i18n="badgeUnweighted">按课程科目加权估算</span>
       </div>
       <p class="disclaimer" data-i18n="disclaimer">
         本工具为非官方参考工具，与大学联招处（JUPAS Office）及各院校无任何隶属关系。估算未套用 2027 科目加权，仅为未加权 Best 5 / Best 6 参考值，不可视为录取机会预测。请以各院校官方公布为准。
@@ -30,41 +31,51 @@
     </header>
 
     <div class="layout">
-      <aside class="panel panel-grades">
-        <h2 data-i18n="gradesTitle">你的 DSE 成绩</h2>
+      <aside class="panel panel-grades" id="panel-grades">
+        <div class="panel-grades-inner">
+          <h2 data-i18n="gradesTitle">你的 DSE 成绩</h2>
 
-        <h3 data-i18n="coreTitle">核心科目</h3>
-        <div class="grade-grid">
-          <div class="grade-row">
-            <label for="grade-chi" data-i18n="chinese">中国语文</label>
-            <select id="grade-chi"></select>
+          <h3 data-i18n="coreTitle">核心科目</h3>
+          <div class="grade-grid">
+            <div class="grade-row">
+              <label for="grade-chi" data-i18n="chinese">中国语文</label>
+              <select id="grade-chi"></select>
+            </div>
+            <div class="grade-row">
+              <label for="grade-eng" data-i18n="english">英国语文</label>
+              <select id="grade-eng"></select>
+            </div>
+            <div class="grade-row">
+              <label for="grade-math" data-i18n="math">数学（必修）</label>
+              <select id="grade-math"></select>
+            </div>
+            <div class="grade-row">
+              <label for="grade-csd" data-i18n="csd">公民与社会发展</label>
+              <select id="grade-csd"></select>
+            </div>
           </div>
-          <div class="grade-row">
-            <label for="grade-eng" data-i18n="english">英国语文</label>
-            <select id="grade-eng"></select>
-          </div>
-          <div class="grade-row">
-            <label for="grade-math" data-i18n="math">数学（必修）</label>
-            <select id="grade-math"></select>
-          </div>
-          <div class="grade-row">
-            <label for="grade-csd" data-i18n="csd">公民与社会发展</label>
-            <select id="grade-csd"></select>
-          </div>
-        </div>
-        <p class="hint" data-i18n="csdHint">公民科通常不计入 Best 5/6 分数。</p>
+          <p class="hint" data-i18n="csdHint">公民科通常不计入 Best 5/6 分数。</p>
 
-        <h3 data-i18n="electivesTitle">选修科目（最多 5 科）</h3>
-        <div id="electives-list"></div>
-        <button type="button" class="btn btn-ghost" id="btn-add-elective" data-i18n="addElective">+ 添加选修</button>
+          <div class="eligibility-box" id="eligibility-box">
+            <strong data-i18n="eligTitle">入学要求提示</strong>
+            <p data-i18n="eligBody">多数课程要求公民科「达标」(Attained)。完整 2027 入学要求尚未全部载入本站；请另核院校官方页面。核心科常见底线约「332A」+ 选修，但各课程不同。</p>
+          </div>
 
-        <button type="button" class="btn btn-primary" id="btn-calc" data-i18n="calc">估算并比较</button>
+          <h3 data-i18n="electivesTitle">选修科目（最多 5 科）</h3>
+          <div id="electives-list"></div>
+          <button type="button" class="btn btn-ghost" id="btn-add-elective" data-i18n="addElective">+ 添加选修</button>
 
-        <div class="scale-box">
-          <strong data-i18n="scaleTitle">换算说明（未加权）</strong>
-          <p style="margin:.35rem 0 0" data-i18n="scaleBody">
-            中大 / 港大 / 科大：5**=8.5，5*=7，5=5.5，4=4，3=3，2=2，1=1。理大：简易 5**=7 量表（理大官方为加权分数，尺度不同，无法直接对比）。公民科一般不计入分数。医学（如中大 MBChB）使用 5**=7 量表。
-          </p>
+          <button type="button" class="btn btn-primary" id="btn-calc" data-i18n="calc">估算并比较</button>
+
+          <div class="scale-box">
+            <strong data-i18n="scaleTitle">换算说明（未加权）</strong>
+            <p style="margin:.35rem 0 0" data-i18n="scaleBody">
+              中大 / 港大 / 科大：5**=8.5，5*=7，5=5.5，4=4，3=3，2=2，1=1。理大：简易 5**=7 量表（理大官方为加权分数，尺度不同，无法直接对比）。公民科一般不计入分数。医学（如中大 MBChB）使用 5**=7 量表。
+            </p>
+            <p class="hint" style="margin:.45rem 0 0" data-i18n="unweightedNote">
+              你的估算 = 未加权 Best 5/6；院校公布的 LQ/Med/UQ 多为加权分数。两者尺度可能不同，档位仅供粗略对照。
+            </p>
+          </div>
         </div>
       </aside>
 
@@ -72,13 +83,13 @@
         <h2 data-i18n="resultsTitle">课程比较</h2>
 
         <div class="filters">
-          <input type="search" id="search-input" data-i18n-placeholder="searchPh" placeholder="搜寻 JS 编号或课程名称…" />
-          <div class="uni-chips" role="group" aria-label="University filter">
-            <button type="button" class="chip active" data-uni="ALL" data-i18n="allUnis">全部院校</button>
-            <button type="button" class="chip" data-uni="CUHK">CUHK</button>
-            <button type="button" class="chip" data-uni="HKU">HKU</button>
-            <button type="button" class="chip" data-uni="HKUST">HKUST</button>
-            <button type="button" class="chip" data-uni="PolyU">PolyU</button>
+          <input type="search" id="search-input" data-i18n-placeholder="searchPh" placeholder="搜寻 JS 编号或课程名称…" autocomplete="off" />
+          <div class="uni-chips" role="tablist" aria-label="University filter">
+            <button type="button" class="chip active" data-uni="ALL" role="tab" aria-selected="true" data-i18n="allUnis">全部院校</button>
+            <button type="button" class="chip" data-uni="CUHK" role="tab" aria-selected="false">CUHK</button>
+            <button type="button" class="chip" data-uni="HKU" role="tab" aria-selected="false">HKU</button>
+            <button type="button" class="chip" data-uni="HKUST" role="tab" aria-selected="false">HKUST</button>
+            <button type="button" class="chip" data-uni="PolyU" role="tab" aria-selected="false">PolyU</button>
           </div>
           <label class="sr-only" for="sort-select" data-i18n="sortLabel">排序</label>
           <select id="sort-select">
@@ -86,6 +97,7 @@
             <option value="gap">按与估算差距（近→远）</option>
             <option value="lq">按下四分位（高→低）</option>
             <option value="name">按课程名称</option>
+            <option value="code">按 JS 编号</option>
           </select>
         </div>
 
@@ -101,13 +113,32 @@
     </div>
 
     <footer class="site-footer">
-      <p data-i18n="footer">非官方工具 · 仅供参考 · 数据为 2026 收生结果</p>
+      <p data-i18n="footer">非官方工具 · 仅供参考 · 数据为 2026 收生结果 · 非录取机会预测</p>
+      <p data-i18n="footerDetail">
+        仅含中大 / 港大 / 科大 / 理大共 191 个课程的 2026 收生分位。估算为未加权 Best 5/6，未套用科目加权。科大 / 理大不公布 UQ。完整 2027 入学要求与加权尚未全部载入。
+      </p>
       <p>
-        <a href="../RESEARCH.md" data-i18n="researchLink">数据缺口说明（RESEARCH.md）</a>
+        <a href="https://github.com/asten10086-wq/jupascal-2027" target="_blank" rel="noopener noreferrer" data-i18n="githubLink">GitHub 仓库</a>
+        ·
+        <a href="https://github.com/asten10086-wq/jupascal-2027/blob/main/RESEARCH.md" target="_blank" rel="noopener noreferrer" data-i18n="researchLink">数据缺口说明</a>
         · CUHK / HKU / HKUST / PolyU · 191 programmes
       </p>
     </footer>
   </div>
+
+  <!-- Programme detail drawer -->
+  <div class="drawer-backdrop" id="drawer-backdrop" hidden></div>
+  <aside class="drawer" id="prog-drawer" hidden aria-hidden="true" role="dialog" aria-labelledby="drawer-title">
+    <div class="drawer-header">
+      <button type="button" class="btn-icon drawer-close" id="drawer-close" aria-label="Close">×</button>
+      <div>
+        <span class="prog-code" id="drawer-code"></span>
+        <h2 class="drawer-title" id="drawer-title"></h2>
+        <p class="prog-uni" id="drawer-uni"></p>
+      </div>
+    </div>
+    <div class="drawer-body" id="drawer-body"></div>
+  </aside>
 
   <script src="data.js"></script>
   <script src="app.js"></script>
