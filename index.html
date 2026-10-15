@@ -26,7 +26,7 @@
         <span class="badge muted" data-i18n="badgeUnweighted">按课程科目加权估算</span>
       </div>
       <p class="disclaimer" data-i18n="disclaimer">
-        本工具为非官方参考工具，与大学联招处（JUPAS Office）及各院校无任何隶属关系。估算未套用 2027 科目加权，仅为未加权 Best 5 / Best 6 参考值，不可视为录取机会预测。请以各院校官方公布为准。
+        本工具为非官方参考工具，与大学联招处（JUPAS Office）及各院校无任何隶属关系。估算已套用课程 2026 科目加权（成绩×权重）后的 Best 5 / Best 6，不可视为录取机会预测。2027 加权或入学要求如有更新，请以院校官方为准。
       </p>
     </header>
 
@@ -68,12 +68,12 @@
           <button type="button" class="btn btn-primary" id="btn-calc" data-i18n="calc">估算并比较</button>
 
           <div class="scale-box">
-            <strong data-i18n="scaleTitle">换算说明（未加权）</strong>
+            <strong data-i18n="scaleTitle">换算与加权说明</strong>
             <p style="margin:.35rem 0 0" data-i18n="scaleBody">
-              中大 / 港大 / 科大：5**=8.5，5*=7，5=5.5，4=4，3=3，2=2，1=1。理大：简易 5**=7 量表（理大官方为加权分数，尺度不同，无法直接对比）。公民科一般不计入分数。医学（如中大 MBChB）使用 5**=7 量表。
+              中大 / 港大 / 科大：多数课程 5**=8.5，5*=7，5=5.5；医学等例外见课程详情。理大：5**=7 后再乘科目权重。显示分数 = 等级换算分 × 科目权重后取 Best 5/6。公民科一般不计入分数。
             </p>
             <p class="hint" style="margin:.45rem 0 0" data-i18n="unweightedNote">
-              你的估算 = 未加权 Best 5/6；院校公布的 LQ/Med/UQ 多为加权分数。两者尺度可能不同，档位仅供粗略对照。
+              估算已套用该课程公布的科目加权（成绩×权重）；若缺个别加权则按等权（×1）并在详情注明。
             </p>
           </div>
         </div>
@@ -115,7 +115,7 @@
     <footer class="site-footer">
       <p data-i18n="footer">非官方工具 · 仅供参考 · 数据为 2026 收生结果 · 非录取机会预测</p>
       <p data-i18n="footerDetail">
-        仅含中大 / 港大 / 科大 / 理大共 191 个课程的 2026 收生分位。估算为未加权 Best 5/6，未套用科目加权。科大 / 理大不公布 UQ。完整 2027 入学要求与加权尚未全部载入。
+        仅含中大 / 港大 / 科大 / 理大共 191 个课程的 2026 收生分位。估算按课程 2026 科目加权。科大 / 理大不公布 UQ。完整 2027 入学要求如有更新请以官方为准。
       </p>
       <p>
         <a href="https://github.com/asten10086-wq/jupascal-2027" target="_blank" rel="noopener noreferrer" data-i18n="githubLink">GitHub 仓库</a>

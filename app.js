@@ -79,10 +79,10 @@
       formula: '计分方式',
       vintage: '数据年份',
       weights: '科目加权',
-      bandAbove: '高于上四分位 / 中位数以上',
-      bandMedUq: '中位数–上四分位之间',
-      bandLqMed: '下四分位–中位数之间',
-      bandBelow: '低于下四分位',
+      bandAbove: '高于上四分位（绿）',
+      bandMedUq: '接近中位数（黄）',
+      bandLqMed: '接近中位数（黄）',
+      bandBelow: '低于上四分位（红）',
       bandNa: '无法直接比较',
       polyuWarn: '理大官方收生分为加权总分；本站已按 2026/27 科目权重估算。尺度应可对照，但仍属近似参考。',
       weightedWarn: '估算 = 成绩换算分 × 科目权重后的计分结果，用于对照院校公布的 LQ / Med / UQ。',
@@ -159,10 +159,10 @@
       formula: 'Formula',
       vintage: 'Data vintage',
       weights: 'Subject weights',
-      bandAbove: 'Above UQ / at or above median',
-      bandMedUq: 'Between median & UQ',
-      bandLqMed: 'Between LQ & median',
-      bandBelow: 'Below lower quartile',
+      bandAbove: 'Above UQ (green)',
+      bandMedUq: 'Near median (yellow)',
+      bandLqMed: 'Near median (yellow)',
+      bandBelow: 'Below UQ (red)',
       bandNa: 'Not directly comparable',
       polyuWarn: 'PolyU published figures are weighted totals; this site estimates with 2026/27 subject weights. Comparison should be on a similar scale but remains approximate.',
       weightedWarn: 'Estimate = converted grade points × subject weights under the programme formula, compared with published LQ / Med / UQ.',
@@ -435,22 +435,22 @@
 
     if (lq == null && med == null && uq == null) return { band: 'na', reason: 'nodata' };
 
-    // With UQ (CUHK / HKU)
-    if (uq != null && s >= uq) return { band: 'above', reason: 'uq' };
-    if (med != null && uq != null && s >= med && s < uq) return { band: 'med-uq', reason: 'med-uq' };
-    if (lq != null && med != null && s >= lq && s < med) return { band: 'lq-med', reason: 'lq-med' };
-    if (lq != null && s < lq) return { band: 'below', reason: 'below-lq' };
+    // Near median (±1) → yellow (priority over below-UQ red)
+    const nearMed = med != null && Math.abs(s - med) <= 1;
 
-    // No UQ (HKUST / PolyU): above/at median → green-ish; between LQ and med → yellow; below LQ → red
-    if (uq == null) {
-      if (med != null && s >= med) return { band: 'above', reason: 'ge-med-no-uq' };
-      if (lq != null && med != null && s >= lq && s < med) return { band: 'lq-med', reason: 'lq-med-no-uq' };
-      if (lq != null && s < lq) return { band: 'below', reason: 'below-lq' };
-      if (med != null && s < med) return { band: 'below', reason: 'below-med' };
-      if (lq != null && s >= lq) return { band: 'lq-med', reason: 'ge-lq' };
+    // With UQ: above UQ → green whole card; near median → yellow; else below UQ → red
+    if (uq != null) {
+      if (s >= uq) return { band: 'above', reason: 'above-uq' };
+      if (nearMed) return { band: 'lq-med', reason: 'near-med' };
+      return { band: 'below', reason: 'below-uq' };
     }
 
-    if (lq == null && med != null && s < med) return { band: 'below', reason: 'below-med' };
+    // No UQ (HKUST / PolyU): at/above median → green; near median → yellow; else red
+    if (med != null && s >= med) return { band: 'above', reason: 'ge-med-no-uq' };
+    if (nearMed) return { band: 'lq-med', reason: 'near-med-no-uq' };
+    if (lq != null && s >= lq && med != null && s < med) return { band: 'lq-med', reason: 'lq-med-no-uq' };
+    if (lq != null && s < lq) return { band: 'below', reason: 'below-lq' };
+    if (med != null && s < med) return { band: 'below', reason: 'below-med' };
     return { band: 'na', reason: 'fallback' };
   }
 
@@ -469,7 +469,7 @@
 
   function bandLabel(band, prog) {
     if (band === 'above' && prog && prog.upper_quartile == null) {
-      return lang === 'zh' ? '不低于中位数' : 'At / above median';
+      return lang === 'zh' ? '不低于中位数（绿）' : 'At / above median (green)';
     }
     const map = {
       above: t('bandAbove'),
