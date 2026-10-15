@@ -67,6 +67,8 @@
       sortLQ: '按下四分位（高→低）',
       sortCode: '按 JS 编号',
       allUnis: '全部院校',
+      admissibleOnly: '只显示可入读',
+      admissibleHint: '近似参考：加权估算 ≥ 该课程 2026 下四分位 LQ（缺 LQ 则用中位数；两者皆缺则隐藏）。非录取保证。',
       showing: '显示',
       of: '/',
       programmes: '个课程',
@@ -147,6 +149,8 @@
       sortLQ: 'Lower quartile (high → low)',
       sortCode: 'JS code',
       allUnis: 'All universities',
+      admissibleOnly: 'Show admissible only',
+      admissibleHint: 'Approximate: weighted estimate ≥ programme 2026 LQ (falls back to median if LQ missing; hidden if both missing). Not an offer guarantee.',
       showing: 'Showing',
       of: 'of',
       programmes: 'programmes',
@@ -537,6 +541,17 @@
     return keys.map(function (k) { return k + '×' + w[k]; }).join(', ');
   }
 
+
+  function isAdmissible(r) {
+    const est = r.est && r.est.score;
+    if (est == null) return false;
+    const threshold = r.prog.lower_quartile != null
+      ? r.prog.lower_quartile
+      : r.prog.median;
+    if (threshold == null) return false;
+    return est >= threshold;
+  }
+
   function renderResults() {
     const list = $('#prog-list');
     const meta = $('#results-meta-text');
@@ -550,8 +565,11 @@
     const unis = getActiveUnis();
     const sort = $('#sort-select').value;
 
+    const admissibleOnly = $('#filter-admissible') && $('#filter-admissible').checked;
+
     let rows = lastComputed.filter(function (r) {
       if (unis.indexOf(r.prog.university) === -1) return false;
+      if (admissibleOnly && !isAdmissible(r)) return false;
       if (!q) return true;
       const hay = (
         r.prog.js_code + ' ' +
@@ -771,8 +789,10 @@
     if (!lastComputed) return;
     const unis = getActiveUnis();
     const q = ($('#search-input').value || '').trim().toLowerCase();
+    const admissibleOnly = $('#filter-admissible') && $('#filter-admissible').checked;
     const rows = lastComputed.filter(function (r) {
       if (unis.indexOf(r.prog.university) === -1) return false;
+      if (admissibleOnly && !isAdmissible(r)) return false;
       if (!q) return true;
       const hay = (r.prog.js_code + ' ' + r.prog.programme_name + ' ' + (r.prog.programme_name_zh || '')).toLowerCase();
       return hay.indexOf(q) !== -1;
@@ -825,6 +845,7 @@
     $('#btn-add-elective').addEventListener('click', function () { addElective(); });
     $('#search-input').addEventListener('input', renderResults);
     $('#sort-select').addEventListener('change', renderResults);
+    $('#filter-admissible').addEventListener('change', renderResults);
     $('#btn-export').addEventListener('click', exportCsv);
     $('#drawer-close').addEventListener('click', closeDrawer);
     $('#drawer-backdrop').addEventListener('click', closeDrawer);

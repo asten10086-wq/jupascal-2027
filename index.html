@@ -99,6 +99,13 @@
             <option value="name">按课程名称</option>
             <option value="code">按 JS 编号</option>
           </select>
+          <label class="filter-check" for="filter-admissible">
+            <input type="checkbox" id="filter-admissible" />
+            <span class="filter-check-text">
+              <span data-i18n="admissibleOnly">只显示可入读 / Show admissible only</span>
+              <small data-i18n="admissibleHint">近似：加权估算 ≥ 2026 LQ（缺 LQ 则用中位数；两者皆缺则隐藏）。非录取保证。</small>
+            </span>
+          </label>
         </div>
 
         <div class="results-meta">

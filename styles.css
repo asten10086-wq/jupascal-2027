@@ -624,3 +624,42 @@ body.drawer-open { overflow: hidden; }
     max-height: 92dvh;
   }
 }
+
+/* Admissible-only filter */
+.filter-check {
+  display: flex;
+  align-items: flex-start;
+  gap: .45rem;
+  flex: 1 1 100%;
+  font-size: .82rem;
+  color: var(--ink);
+  cursor: pointer;
+  padding: .45rem .65rem;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--bg-soft);
+  margin-top: .15rem;
+}
+.filter-check input {
+  margin-top: .2rem;
+  flex-shrink: 0;
+  accent-color: var(--accent);
+  width: 1rem;
+  height: 1rem;
+  cursor: pointer;
+}
+.filter-check-text {
+  display: flex;
+  flex-direction: column;
+  gap: .15rem;
+  line-height: 1.35;
+}
+.filter-check-text small {
+  font-size: .72rem;
+  color: var(--ink-muted);
+  font-weight: 400;
+}
+.filter-check:has(input:checked) {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 8%, #fff);
+}
